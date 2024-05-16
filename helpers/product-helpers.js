@@ -5,7 +5,8 @@ module.exports = {
         console.log(product);
         db.get().collection('product').insertOne(product)
             .then((data) => {
-                callback(true);
+                console.log(data)
+                callback(data.insertedId);
             })
             .catch((err) => {
                 console.error("Error occurred while adding product:", err);

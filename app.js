@@ -29,7 +29,6 @@ db.connect((err)=>{
     console.log(err)
   }else{
     console.log('database connected')
-    console.log(db.get())
   }
 })
 app.use('/', usersRouter);
