@@ -1,5 +1,7 @@
 var express = require('express');
+const productHelpers = require('../helpers/product-helpers');
 var router = express.Router();
+var productHelper = require('../helpers/product-helpers')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -40,13 +42,16 @@ router.get('/add-product',(req,res)=>{
 })
 
 router.post('/add-product',(req,res)=>{
-  console.log(req.body)
-  if (!req.files || !req.files.Image) {
-    console.log('No file uploaded');
-  } else {
-    // Log details of the uploaded file
-    console.log(req.files.Image);
-  }
+  // console.log(req.body)
+  // if (!req.files || !req.files.Image) {
+  //   console.log('No file uploaded');
+  // } else {
+  //   // Log details of the uploaded file
+  //   console.log(req.files.Image);
+  // }
+  productHelper.addProduct(req.body,(result)=>{
+    res.render('admin/add-prodcut')
+  })
 })
 
 module.exports = router;
