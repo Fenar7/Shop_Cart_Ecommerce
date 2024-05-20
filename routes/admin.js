@@ -34,9 +34,42 @@ router.post('/add-product', (req, res) => {
               console.error('Error inserting image:', err)
               return res.status(500).send('Error inserting image')
           }
-          res.render('admin/add-product')
+          res.render('admin/add-product',{admin:true})
       })
   })
 })
+
+router.get('/delete-product/:id',(req,res)=>{
+    let proId = req.params.id
+    console.log(proId)
+    productHelpers.deleteProduct(proId).then((response)=>{
+      res.redirect('/admin/',{admin:true})
+    })
+})
+
+router.get('/edit-product/:id',(req,res)=>{
+  let product = productHelpers.getProductDetails(req.params.id).then((product)=>{
+    console.log(product)
+    res.render('admin/edit-prodcut.hbs',{product})
+  })
+})
+
+router.post('/edit-product/:id',(req,res)=>{
+  productHelpers.updateProduct(req.params.id,req.body).then(()=>{
+    res.redirect('/admin')
+    if(req.files.Image){
+      let id = req.params.id
+      let image= req.files.Image
+      let imagePath = path.join(__dirname, '../public/product-images/', `${id}.png`)
+      image.mv(imagePath, (err) => {
+        if (err) {
+            console.error('Error Updating image:', err)
+            return res.status(500).send('Error updating image')
+        }
+    })
+    }
+  })
+})
+
 
 module.exports = router;

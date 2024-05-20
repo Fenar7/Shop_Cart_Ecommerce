@@ -1,3 +1,4 @@
 module.exports={
-    PROUDUCT_COLLECTION: 'product'
+    PROUDUCT_COLLECTION: 'product',
+    USER_COLLECTION: 'user'
 }
