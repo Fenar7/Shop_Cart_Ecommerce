@@ -73,12 +73,15 @@ router.get('/cart',verifyLogin,async (req,res)=>{
   res.render('user/cart',{products,user:req.session.user})
 })
 
-router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
-  console.log('api call')
-  userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
-    console.log('product added now redirecting to home page')
-    res.json({status:true})
-  })
-})
+router.get('/add-to-cart/:id', verifyLogin, (req, res) => {
+  console.log('API call to add product to cart');
+  userHelpers.addToCart(req.params.id, req.session.user._id).then(() => {
+      console.log('Product added to cart');
+      res.json({ status: true });
+  }).catch((err) => {
+      console.error('Error adding product to cart:', err);
+      res.json({ status: false });
+  });
+});
 
 module.exports = router;
