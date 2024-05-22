@@ -46,21 +46,41 @@ module.exports = {
     },
 
     addToCart:(proId,userId)=>{
+        let proObj={
+            item:new objectId(proId),
+            quantity:1
+        }
         return new Promise(async (resolve,reject)=>{
             let userCart = await db.get().collection(collection.CART_COLLECTION).findOne({user:new objectId(userId)})
             if(userCart){
-                await db.get().collection(collection.CART_COLLECTION)
-                .updateOne(
-                    { user: new objectId(userId) },
-                    { 
-                        $push: { products: new objectId(proId) } 
+                console.log(userCart.products.map(product => product));
+                let proExist = userCart.products.findIndex(product=>product.item==proId)
+                console.log(proExist)
+                if(proExist!=-1){
+                    db.get().collection(collection.CART_COLLECTION)
+                    .updateOne({'products.item':new objectId(proId)},
+                    {
+                        $inc:{'products.$.quantity':1}
                     }
-                );
+                ).then(()=>{
+                    resolve()
+                })
+                }else{
+                    await db.get().collection(collection.CART_COLLECTION) 
+                    .updateOne(
+                        { user: new objectId(userId) },
+                        { 
+                            $push: {products:proObj} 
+                        }
+                    ).then((response)=>{
+                        resolve()
+                    });
+                }
             console.log('Product added to cart successfully.');
             }else{
                 let cartObj = {
                     user: new objectId(userId),
-                    products: [new objectId(proId)]
+                    products: [proObj]
                 }
                 db.get().collection(collection.CART_COLLECTION).insertOne(cartObj).then((response)=>{
                     resolve()
@@ -75,24 +95,25 @@ module.exports = {
                 {
                     $match:{user:new objectId(userId)}
                 },
-                {
-                    $lookup:{
-                        from:collection.PROUDUCT_COLLECTION,
-                        let:{proList:'$products'},
-                        pipeline:[
-                            {
-                                $match:{
-                                    $expr:{
-                                        $in:['$_id',"$$proList"]
-                                    }
-                                }
-                            }
-                        ],
+                // {
+                //     $lookup:{
+                //         from:collection.PROUDUCT_COLLECTION,
+                //         let:{proList:'$products'},
+                //         pipeline:[
+                //             {
+                //                 $match:{
+                //                     $expr:{
+                //                         $in:['$_id',"$$proList"]
+                //                     }
+                //                 }
+                //             }
+                //         ],
 
-                        as:'cartItems'
-                    }
-                }
+                //         as:'cartItems'
+                //     }
+                // }
             ]).toArray()
+            console.log(cartItems)
             resolve(cartItems[0].cartItems)
         })
     },
