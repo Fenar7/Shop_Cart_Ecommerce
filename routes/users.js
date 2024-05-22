@@ -75,9 +75,9 @@ router.get('/cart',verifyLogin,async (req,res)=>{
 
 router.get('/add-to-cart/:id', verifyLogin, (req, res) => {
   console.log('API call to add product to cart');
+  res.json({ status: true });
   userHelpers.addToCart(req.params.id, req.session.user._id).then(() => {
       console.log('Product added to cart');
-      res.json({ status: true });
   }).catch((err) => {
       console.error('Error adding product to cart:', err);
       res.json({ status: false });

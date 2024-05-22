@@ -1,9 +1,9 @@
 function addToCart(proId) {
-    console.log('added');
+    console.log('Starting AJAX request to add product', proId);
     $.ajax({
-        url: '/add-to-cart/'+proId,
+        url: '/add-to-cart/' + proId,
         method: 'get',
-        timeout: 5000, // 5 seconds timeout
+        timeout: 10000, // 10 seconds timeout
         success: (response) => {
             console.log('AJAX request succeeded');
             console.log('Response:', response);
