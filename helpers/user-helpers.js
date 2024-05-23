@@ -58,7 +58,7 @@ module.exports = {
                 console.log(proExist)
                 if(proExist!=-1){
                     db.get().collection(collection.CART_COLLECTION)
-                    .updateOne({'products.item':new objectId(proId)},
+                    .updateOne({user:new objectId(userId),'products.item':new objectId(proId)},
                     {
                         $inc:{'products.$.quantity':1}
                     }
@@ -135,7 +135,6 @@ module.exports = {
                 //     }
                 // }
             ]).toArray()
-            console.log(cartItems[0].products)
             resolve(cartItems)
         })
     },
@@ -151,16 +150,32 @@ module.exports = {
         })
     },
 
-    changeProductQuantity:({cartId,proId,count})=>{
+    changeProductQuantity:(details)=>{
+        details.count = parseInt(details.count)
+        details.quantity = parseInt(details.quantity)
+        console.log('increment fn triggered')
         return new Promise((resolve,reject)=>{
-            db.get().collection(collection.CART_COLLECTION)
-                    .updateOne({'products.item':new objectId(proId)},
+            console.log("details count ="+details.count)
+            console.log("details quantity ="+details.quantity)
+            if(details.count==-1 && details.quantity==1){
+                db.get().collection(collection.CART_COLLECTION)
+                    .updateOne({_id:new objectId(details.cart)},
                     {
-                        $inc:{'products.$.quantity':count}
+                        $pull:{products:{item:new objectId(details.product)}}
                     }
-                ).then(()=>{
-                    resolve()
+                ).then((response)=>{
+                    resolve({removeProduct:true})
                 })
+            }else{
+                db.get().collection(collection.CART_COLLECTION)
+                    .updateOne({_id:new objectId(details.cart),'products.item':new objectId(details.product)},
+                    {
+                        $inc:{'products.$.quantity':details.count}
+                    }
+                ).then((response)=>{
+                    resolve(true)
+                })
+            }
         })
     }
 };
