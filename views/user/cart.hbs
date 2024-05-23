@@ -5,6 +5,7 @@
                 <tr scope="row">
                     <th scope="col">Item</th>
                     <th scope="col">Title</th>
+                    <th scope="col">Price</th>
                     <th scope="col">Quantity</th>
                 </tr>
             </thead>
@@ -14,13 +15,14 @@
                 <tr>
                     <td><img src="/product-images/{{this.product._id}}.png" alt="" style="width: 70px; height: 70px"></td>
                     <td>{{this.product.Name}}</td>
+                    <td>Rs.{{this.product.Price}}</td>
                     <td>
                         <button class="cart-item-count mr-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}',-1)">-</button>
                         <span id="{{this.product._id}}">{{this.quantity}}</span>
                         <button class="cart-item-count ml-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}',1)">+</button>
                     </td>
                     <td>
-                        <a href="" class="btn btn-danger">Remove</a>
+                        <a href="" class="btn btn-danger" onclick="deleteItemCart('{{this._id}}','{{this.product._id}}')">Remove</a>
                     </td>
                 </tr>
                 {{/each}}
@@ -49,6 +51,23 @@
                     location.reload()
                 }else{
                     document.getElementById(proId).innerHTML=quantity+count
+                }
+            }
+        })
+    }
+
+    function deleteItemCart(cartId,proId){
+        $.ajax({
+            url:'/delete-product-item',
+            data:{
+                cart: cartId,
+                product: proId
+            },
+            method: 'post',
+            success:(response)=>{
+                if(response.removeProduct){
+                    alert("Product Removed from Cart")
+                    location.reload()
                 }
             }
         })

@@ -90,4 +90,10 @@ router.post('/change-product-quantity',(req,res,next)=>{
   })
 })
 
+router.post('/delete-product-item',(req,res,next)=>{
+  userHelpers.deleteItemCart(req.body).then((response)=>{
+    res.json(response)
+  })
+})
+
 module.exports = router;

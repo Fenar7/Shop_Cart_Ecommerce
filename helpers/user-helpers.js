@@ -177,5 +177,19 @@ module.exports = {
                 })
             }
         })
+    },
+
+    deleteItemCart:(details)=>{
+        console.log('delete function triggered')
+        return new Promise((resolve,reject)=>{
+            db.get().collection(collection.CART_COLLECTION)
+                    .updateOne({_id:new objectId(details.cart)},
+                    {
+                        $pull:{products:{item:new objectId(details.product)}}
+                    }
+                ).then((response)=>{
+                    resolve({removeProduct:true})
+                })
+        })
     }
 };
