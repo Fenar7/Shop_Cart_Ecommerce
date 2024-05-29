@@ -1,6 +1,7 @@
 const db = require('../config/connection');
 const collection = require('../config/collections');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const { response } = require('express');
 var objectId = require('mongodb').ObjectId
 
 module.exports = {
@@ -173,7 +174,7 @@ module.exports = {
                         $inc:{'products.$.quantity':details.count}
                     }
                 ).then((response)=>{
-                    resolve(true)
+                    resolve({status:true})
                 })
             }
         })
@@ -190,6 +191,66 @@ module.exports = {
                 ).then((response)=>{
                     resolve({removeProduct:true})
                 })
+        })
+    },
+     
+    getTotalAmount:(userId)=>{
+       return new Promise(async (resolve,reject)=>{
+        let total = await db.get().collection(collection.CART_COLLECTION).aggregate([
+            {
+                $match:{user:new objectId(userId)}
+            },
+            {
+                $unwind:'$products'
+            },
+            {
+                $project:{
+                    item:'$products.item',
+                    quantity: '$products.quantity'
+                }
+            },
+            {
+                $lookup:{
+                    from:collection.PROUDUCT_COLLECTION,
+                    localField:'item',
+                    foreignField:'_id',
+                    as:'product'
+                }
+            },
+            {
+                $project:{
+                    item:1,quantity:1,product:{$arrayElemAt:['$product',0]}
+                }
+            },
+            {
+                $group:{
+                    _id:null,
+                    total: {
+                        $sum: {
+                            $multiply: [
+                                { $toDouble: '$quantity' },
+                                { $toDouble: '$product.Price' }
+                            ]
+                        }
+                    }
+                }
+            }
+        ]).toArray()
+        console.log(total)
+        resolve(total[0].total)
+       })
+    },
+
+    placeOrder:(order,products,total)=>{
+        return new Promise((resolve,reject)=>{
+            console.log(order,products,total)
+        })
+    },
+
+    getCartProductList:(userId)=>{
+        return new Promise(async (resolve,reject)=>{
+            let cart = await db.get().collection(collection.CART_COLLECTION).findOne({user:objectId(userId)})
+            response(cart.products)
         })
     }
 };

@@ -1,0 +1,54 @@
+<section>
+    <div class="container mt-5">
+        <form action="" method="post" id="checkout-form">
+            <div class="row">
+            <div class="col-md-6">
+                <h2>Enter Delivery Details</h2><br>
+                <div>
+                    <label for="">Adress</label>
+                    <input type="text" class="form-control" type="text" id="address" name="address">
+
+                    <label for="">Pincode</label>
+                    <input type="text" class="form-control" name="pincode">
+
+                    <label for="">Mobile no</label>
+                    <input type="text" class="form-control" name="mobile">
+
+                    <input type="text" name="userId" id="" value="{{user._id}}" hidden>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="container mt-5 ml-5 checkout">
+                    <h5>Total Amount : Rs.{{total}}</h5>
+                    <hr>
+                    <div class="payment">
+                        <p>Payment Method</p>
+                        <label for="" class="radio-inline">
+                            <input type="radio" name="payment-method" value="COD" checked>COD
+                        </label>
+                        <label for="" class="radio-inline mt-2">
+                            <input type="radio" name="payment-method" value="COD" checked>Online Payment
+                        </label>
+                        <input type="submit" value="Checkout">
+                    </div>
+                </div>
+            </div>
+        </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    $("#checkout-form").submit((e)=>{
+        e.preventDefault()
+        $.ajax({
+            url:'/place-order',
+            method: 'post',
+            data:$('#checkout-form').serialize()
+            success:(response)=>{
+                alert(response)
+            }
+        })
+    })
+</script>

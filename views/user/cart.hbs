@@ -17,9 +17,9 @@
                     <td>{{this.product.Name}}</td>
                     <td>Rs.{{this.product.Price}}</td>
                     <td>
-                        <button class="cart-item-count mr-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}',-1)">-</button>
+                        <button class="cart-item-count mr-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../user}}',-1)">-</button>
                         <span id="{{this.product._id}}">{{this.quantity}}</span>
-                        <button class="cart-item-count ml-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}',1)">+</button>
+                        <button class="cart-item-count ml-3" onclick="changeQuantity('{{this._id}}','{{this.product._id}}','{{../user}}',1)">+</button>
                     </td>
                     <td>
                         <a href="" class="btn btn-danger" onclick="deleteItemCart('{{this._id}}','{{this.product._id}}')">Remove</a>
@@ -28,17 +28,23 @@
                 {{/each}}
             </tbody>
         </table>
+
+        <hr>
+        <h3 class="float-right text-end mr-5 mt-4">Total : Rs<span id="total">{{totalValue}}</span></h3>
+        <a href="/place-order" class="float-end btn btn-success mt-3 mr-5">Place Order</a>
     </div>
 </section>
 
 <script>
-    function changeQuantity(cartId,proId,count){
+    function changeQuantity(cartId,proId,userId,count){
         console.log(proId)
+        console.log("this is the user id "+userId)
         let quantity = parseInt(document.getElementById(proId).innerHTML)
         count = parseInt(count)
         $.ajax({
             url:'/change-product-quantity',
             data:{
+                user:userId,
                 cart: cartId,
                 product: proId,
                 count: count,
@@ -51,6 +57,7 @@
                     location.reload()
                 }else{
                     document.getElementById(proId).innerHTML=quantity+count
+                    document.getElementById('total').innerHTML=response.total
                 }
             }
         })
