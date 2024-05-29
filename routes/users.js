@@ -3,6 +3,7 @@ var router = express.Router();
 var productHelpers = require('../helpers/product-helpers');
 const userHelpers = require('../helpers/user-helpers')
 const path = require('path');
+const { Console } = require('console');
 
 //middleware
 
@@ -104,8 +105,9 @@ router.get('/place-order',verifyLogin,async (req,res)=>{
 })
 
 router.post('/place-order',async (req,res)=>{
-  let products = await userHelpers.getCartProductList(req.body.user)
-  let totalPrice = await userHelpers.getTotalAmount.apply(req.body.user)
+  console.log(req.body)
+  let products = await userHelpers.getCartProductList(req.body.userId)
+  let totalPrice = await userHelpers.getTotalAmount(req.body.userId)
   userHelpers.placeOrder(req.body,products,totalPrice).then((response)=>{
 
 })

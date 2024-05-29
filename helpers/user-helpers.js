@@ -236,6 +236,7 @@ module.exports = {
                 }
             }
         ]).toArray()
+        console.log('total array')
         console.log(total)
         resolve(total[0].total)
        })
@@ -249,8 +250,10 @@ module.exports = {
 
     getCartProductList:(userId)=>{
         return new Promise(async (resolve,reject)=>{
-            let cart = await db.get().collection(collection.CART_COLLECTION).findOne({user:objectId(userId)})
-            response(cart.products)
-        })
+            console.log(userId)
+            let cart = await db.get().collection(collection.CART_COLLECTION).findOne({user:new objectId(userId)})
+            console.log(cart)
+            resolve(cart.products)
+        })  
     }
 };
